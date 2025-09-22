@@ -1,15 +1,15 @@
 package com.oocl.tspsolver.entity;
 
 public class Point {
-    private double longitude;
-    private double latitude;
+    private Double longitude;
+    private Double latitude;
 
     public Point(double longitude, double latitude) {
         this.longitude = longitude;
         this.latitude = latitude;
     }
 
-    public double getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
@@ -17,7 +17,7 @@ public class Point {
         this.latitude = latitude;
     }
 
-    public double getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 

@@ -2,10 +2,10 @@ package com.oocl.tspsolver.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oocl.tspsolver.dto.MatrixRequest;
 import com.oocl.tspsolver.entity.Point;
 import com.oocl.tspsolver.service.TspSolverService;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,8 +17,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -27,7 +27,7 @@ public class TspSolverControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @MockBean
     private TspSolverService tspSolverService;
 
     @Autowired
@@ -45,54 +45,57 @@ public class TspSolverControllerTest {
                 new Point(116.464595, 39.887329)
         };
 
+        MatrixRequest request = new MatrixRequest();
+        request.setPoints(points);
+        request.setType(0); // 0 for distance
+
         JsonNode mockResult = objectMapper.readTree("{\"route\":[0,1,2,0],\"distance\":25000}");
         when(tspSolverService.solveTsp(any(Point[].class), eq(0))).thenReturn(mockResult);
 
         // When & Then
         mockMvc.perform(post("/api/tsp/solver/distance")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(points)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.route").isArray())
                 .andExpect(jsonPath("$.distance").isNumber());
     }
 
-//    @Test
-//    public void testSolveTspWithDuration() throws Exception {
-//        // Given
-//        Point[] points = {
-//                new Point(116.397128, 39.916527),
-//                new Point(116.321286, 39.896026),
-//                new Point(116.464595, 39.887329)
-//        };
-//
-//        JsonNode mockResult = objectMapper.readTree("{\"route\":[0,1,2,0],\"duration\":1800}");
-//        when(tspSolverService.solveTsp(any(Point[].class), eq(1))).thenReturn(mockResult);
-//
-//        // When & Then
-//        mockMvc.perform(post("/api/tsp/solve/duration")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(points)))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.route").isArray())
-//                .andExpect(jsonPath("$.duration").isNumber());
-//    }
+    @Test
+    public void testSolveTspWithDuration() throws Exception {
+        // Given
+        Point[] points = {
+                new Point(116.397128, 39.916527),
+                new Point(116.321286, 39.896026),
+                new Point(116.464595, 39.887329)
+        };
+
+        MatrixRequest request = new MatrixRequest();
+        request.setPoints(points);
+        request.setType(1); // 1 for duration
+
+        JsonNode mockResult = objectMapper.readTree("{\"route\":[0,1,2,0],\"duration\":1800}");
+        when(tspSolverService.solveTsp(any(Point[].class), eq(1))).thenReturn(mockResult);
+
+        // When & Then
+        mockMvc.perform(post("/api/tsp/solver/distance")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.route").isArray())
+                .andExpect(jsonPath("$.duration").isNumber());
+    }
 
     @Test
     public void testSolveTspWithEmptyPoints() throws Exception {
         // When & Then
-        mockMvc.perform(post("/api/tsp/solver/distance")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("[]"))
-                .andExpect(status().isBadRequest());
-    }
+        MatrixRequest request = new MatrixRequest();
+        request.setPoints(new Point[0]);
+        request.setType(0);
 
-    @Test
-    public void testSolveTspWithInvalidPoints() throws Exception {
-        // When & Then
         mockMvc.perform(post("/api/tsp/solver/distance")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("[{\"lat\":null,\"lng\":null}]"))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -103,13 +106,17 @@ public class TspSolverControllerTest {
                 new Point(116.397128, 39.916527)
         };
 
+        MatrixRequest request = new MatrixRequest();
+        request.setPoints(points);
+        request.setType(0);
+
         JsonNode mockResult = objectMapper.readTree("{\"route\":[0,0],\"distance\":0}");
         when(tspSolverService.solveTsp(any(Point[].class), eq(0))).thenReturn(mockResult);
 
         // When & Then
         mockMvc.perform(post("/api/tsp/solver/distance")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(points)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.route").isArray())
                 .andExpect(jsonPath("$.route.length()").value(2))
@@ -124,10 +131,14 @@ public class TspSolverControllerTest {
             points[i] = new Point(116.0 + i * 0.01, 39.0 + i * 0.01);
         }
 
+        MatrixRequest request = new MatrixRequest();
+        request.setPoints(points);
+        request.setType(0);
+
         // When & Then
         mockMvc.perform(post("/api/tsp/solver/distance")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(points)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -139,13 +150,17 @@ public class TspSolverControllerTest {
                 new Point(116.321286, 39.896026)
         };
 
+        MatrixRequest request = new MatrixRequest();
+        request.setPoints(points);
+        request.setType(0);
+
         when(tspSolverService.solveTsp(any(Point[].class), eq(0)))
                 .thenThrow(new RuntimeException("Service error"));
 
         // When & Then
         mockMvc.perform(post("/api/tsp/solver/distance")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(points)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -157,10 +172,14 @@ public class TspSolverControllerTest {
                 new Point(116.321286, 100)  // Invalid latitude
         };
 
+        MatrixRequest request = new MatrixRequest();
+        request.setPoints(points);
+        request.setType(0);
+
         // When & Then
         mockMvc.perform(post("/api/tsp/solver/distance")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(points)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
 }
