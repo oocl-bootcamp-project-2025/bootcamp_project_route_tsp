@@ -7,6 +7,7 @@ import com.oocl.tspsolver.service.TspSolverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,11 @@ public class RequestController {
 
     @Autowired
     private TspSolverService tspSolverService;
+
+    @GetMapping("/api/health")
+    public String healthCheck() {
+        return "OK";
+    }
 
     @PostMapping("/api/tsp/solver/distance")
     public ResponseEntity<JsonNode> solveTspWithDistance(@RequestBody MatrixRequest matrixRequest) {
