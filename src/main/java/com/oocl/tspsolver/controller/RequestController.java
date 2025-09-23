@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.oocl.tspsolver.dto.MatrixRequest;
 import com.oocl.tspsolver.entity.Point;
 import com.oocl.tspsolver.service.TspSolverService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,12 @@ public class RequestController {
     }
 
     @PostMapping("/api/tsp/solver/distance")
-    public ResponseEntity<JsonNode> solveTspWithDistance(@RequestBody MatrixRequest matrixRequest) {
+    public ResponseEntity<JsonNode> solveTspWithDistance(
+            HttpServletRequest request,
+            @RequestBody MatrixRequest matrixRequest
+    ) {
+        System.out.println("Request method: " + request.getMethod());
+        System.out.println("Content-Type: " + request.getContentType());
         try {
             // Validate request
             if (matrixRequest.getPoints() == null || matrixRequest.getPoints().length == 0) {
