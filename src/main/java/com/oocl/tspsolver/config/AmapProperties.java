@@ -12,6 +12,15 @@ public class AmapProperties {
     private int qpsDelayMs;
     private int maxRetries;
     private String endpoint;
+    private String drivingRouteEndpoint;
+
+    public String getDrivingRouteEndpoint() {
+        return drivingRouteEndpoint;
+    }
+
+    public void setDrivingRouteEndpoint(String drivingRouteEndpoint) {
+        this.drivingRouteEndpoint = drivingRouteEndpoint;
+    }
 
     public String getApiKey() {
         return apiKey;
