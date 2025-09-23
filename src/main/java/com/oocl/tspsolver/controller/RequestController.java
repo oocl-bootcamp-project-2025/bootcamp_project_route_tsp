@@ -26,7 +26,7 @@ public class RequestController {
         return "OK";
     }
 
-    @PostMapping("/api/tsp/solver/distance/")
+    @PostMapping("/api/tsp/solver/distance")
     public ResponseEntity<JsonNode> solveTspWithDistance(
             HttpServletRequest request,
             @RequestBody MatrixRequest matrixRequest
