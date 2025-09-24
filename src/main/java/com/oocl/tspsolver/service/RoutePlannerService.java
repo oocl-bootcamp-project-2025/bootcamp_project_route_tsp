@@ -63,7 +63,7 @@ public class RoutePlannerService {
                 StandardCharsets.UTF_8);
         String waypoints = URLEncoder.encode(Arrays.stream(points).map(point ->
             String.format("%f,%f", point.getLongitude(), point.getLatitude())
-        ).reduce((a, b) -> a + "|" + b).orElse(""), StandardCharsets.UTF_8);
+        ).reduce((a, b) -> a + ";" + b).orElse(""), StandardCharsets.UTF_8);
         // Amap default
         int type = 32;
         return String.format("%s?origin=%s&destination=%s&key=%s&type=%d&waypoints=%s&output=json&extensions=all&strategy=32&show_fields=cost,polyline",
