@@ -2,7 +2,6 @@ package com.oocl.tspsolver.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.oocl.tspsolver.client.AmapClient;
 import com.oocl.tspsolver.config.AmapProperties;
 import com.oocl.tspsolver.entity.DistanceMatrix;
 import com.oocl.tspsolver.entity.Point;
@@ -10,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
