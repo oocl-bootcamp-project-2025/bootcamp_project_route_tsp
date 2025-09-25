@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -40,7 +39,7 @@ public class RoutePlannerService {
         for (int i = 1; i < waypoints.length - 1; i++) {
             waypointsParam.append(String.format("%f,%f", waypoints[i].getLongitude(), waypoints[i].getLatitude()));
             if (i < waypoints.length - 2) {
-                waypointsParam.append("|");
+                waypointsParam.append(";");
             }
         }
         String waypointsStr = URLEncoder.encode(waypointsParam.toString(), StandardCharsets.UTF_8);
@@ -64,7 +63,7 @@ public class RoutePlannerService {
                 StandardCharsets.UTF_8);
         String waypoints = URLEncoder.encode(Arrays.stream(points).map(point ->
             String.format("%f,%f", point.getLongitude(), point.getLatitude())
-        ).reduce((a, b) -> a + "|" + b).orElse(""), StandardCharsets.UTF_8);
+        ).reduce((a, b) -> a + ";" + b).orElse(""), StandardCharsets.UTF_8);
         // Amap default
         int type = 32;
         return String.format("%s?origin=%s&destination=%s&key=%s&type=%d&waypoints=%s&output=json&extensions=all&strategy=32&show_fields=cost,polyline",

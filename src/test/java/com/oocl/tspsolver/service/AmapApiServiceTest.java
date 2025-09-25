@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.oocl.tspsolver.client.AmapClient;
 import com.oocl.tspsolver.config.AmapProperties;
 import com.oocl.tspsolver.entity.DistanceMatrix;
 import com.oocl.tspsolver.entity.Point;
@@ -23,9 +22,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AmapApiServiceTest {
-    @Mock
-    private AmapClient amapClient;
-
     @Mock
     private AmapProperties props;
 
@@ -61,37 +57,27 @@ class AmapApiServiceTest {
 
     @Test
     void getDistanceMatrix_should_handle_single_point() {
-        // Setup
         Point[] points = new Point[] { new Point(116.481028, 39.989643) };
 
-        // Act
         DistanceMatrix result = amapApiService.getDistanceMatrix(points, 1);
 
-        // Assert
         assertEquals(1, result.getMatrix().length);
         assertEquals(0.0, result.get(0, 0));
     }
 
     @Test
     void getDistanceMatrix_should_build_matrix_from_api_response() throws Exception {
-        // Setup
         Point[] points = new Point[] {
                 new Point(116.481028, 39.989643),
                 new Point(116.434446, 39.90816)
         };
-
-        // Create successful response for both directions
         String successResponse = createSuccessResponse(10500.0);
 
         try (MockedStatic<HttpService> mockedHttpService = mockStatic(HttpService.class)) {
-            // Configure to always return success for any URL
             mockedHttpService.when(() -> HttpService.sendGet(anyString()))
                     .thenReturn(successResponse);
 
-            // Act
             DistanceMatrix matrix = amapApiService.getDistanceMatrix(points, 1);
-
-            // Assert
             double[][] result = matrix.getMatrix();
             assertEquals(0.0, result[0][0]);
             assertEquals(0.0, result[1][1]);
@@ -102,24 +88,17 @@ class AmapApiServiceTest {
 
     @Test
     void getDistanceMatrix_should_throw_exception_after_max_retries() throws Exception {
-        // Setup
         Point[] points = new Point[] {
                 new Point(116.481028, 39.989643),
                 new Point(116.434446, 39.90816)
         };
-
-        // Set max retries to 1
         when(props.getMaxRetries()).thenReturn(1);
-
-        // Create error response
         String errorResponse = createErrorResponse("Error occurred");
 
         try (MockedStatic<HttpService> mockedHttpService = mockStatic(HttpService.class)) {
-            // Always return error
             mockedHttpService.when(() -> HttpService.sendGet(anyString()))
                     .thenReturn(errorResponse);
 
-            // Act & Assert
             RuntimeException exception = assertThrows(
                     RuntimeException.class,
                     () -> amapApiService.getDistanceMatrix(points, 1)
