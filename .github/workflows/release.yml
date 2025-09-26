@@ -202,31 +202,6 @@ jobs:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
 
-#      - name: PROD Health Check
-#        run: |
-#          echo "Starting PROD health check (5 minutes max)..."
-#
-#          SERVICE_URL="${{ secrets.SERVICE_BASE_URL }}"
-#
-#          # Wait 60 seconds for service startup
-#          echo "Waiting 60 seconds for PROD service to start..."
-#          sleep 60
-#
-#          # 5-minute health check with 30-second intervals
-#          for i in {1..10}; do
-#            echo "PROD health check attempt $i/10..."
-#            if curl -s -f --max-time 30 "${SERVICE_URL}/health" > /dev/null 2>&1; then
-#              echo "✅ PROD Service is healthy!"
-#              exit 0
-#            fi
-#            if [ $i -lt 10 ]; then
-#              echo "⏳ PROD Service not ready, waiting 30s..."
-#              sleep 30
-#            fi
-#          done
-#          echo "❌ PROD Health check failed after 5 minutes"
-#          exit 1
-
       - name: Deployment Success Notification
         run: |
           echo "🎉 Release deployment completed successfully!"
